@@ -54,26 +54,21 @@ const DESCRIPTION = [
   'Удачное расположение, есть балкон, красиый район',
   'Рядом много клубов и торговых центров, удобная парковка',
 ];
-const minNumb  = 0;
-const maxNumb = 8;
-const minNumbScore = 1;
-const maxNumbScore = 5;
-const minLocationCoordinateLat = 35.65000;
-const maxLocationCoordinateLat = 35.70000;
-const minLocationCoordinateLng = 139.70000;
-const maxLocationCoordinateLng = 139.80000;
-const minLengthRandomArr = 1;
-const maxLengthRandomArr = 6;
-const minNumberPhoto = 1;
-const maxNumberPhoto = 3;
+const MIN_NUMB_SCORE = 1;
+const MAX_NUMB_SCORE = 5;
+const MIN_LOC_COORDINATE_LAT = 35.65000;
+const MAX_LOC_COORDINATE_LAT = 35.70000;
+const MIN_LOC_COORDINATE_LNG = 139.70000;
+const MAX_LOC_COORDINATE_LNG= 139.80000;
+const MAX_LENGTH_ARRAY_FEATURES = 6;
 const NUMBER_AFTER_DOT_LOC = 5;
+const QUANTITY_CARDS = 10;
 
 
 const getRandomNumber = function(minNumber,maxNumber) {
   if (minNumber < 0 || maxNumber < 0 || maxNumber <= minNumber) {
     return;
   }
-
   return Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
 };
 const getRandomCoordinates  = function  (minCoordinate, maxCoordinate, numberAfterDots)  {
@@ -84,44 +79,39 @@ const getRandomCoordinates  = function  (minCoordinate, maxCoordinate, numberAft
   return originalNumber.toFixed(numberAfterDots);
 };
 const getRandomArrayElement = function  (elements)  {
-  return elements[getRandomNumber(0, elements.length - 1)]
+  return elements[getRandomNumber(0, elements.length - 1)];
 };
-
-const generateFeatures = function () {
-  return getRandomArrayElement(FEATURES);
-};
-
 const generatePhoto = function () {
-  return getRandomArrayElement(PHOTOS)
+  return getRandomArrayElement(PHOTOS);
 };
-
-
-const locationX = getRandomCoordinates(minLocationCoordinateLat,maxLocationCoordinateLat,NUMBER_AFTER_DOT_LOC);
-const locationY = getRandomCoordinates(minLocationCoordinateLng,maxLocationCoordinateLng,NUMBER_AFTER_DOT_LOC);
-
-const getRandomUserID = function () {
-  return USERS_ID.splice(Math.floor(Math.random() * USERS_ID.length), 1);
+const getRandomUserID = function (array) {
+  if (array.length === 0) {
+    return '';
+  }
+  return `img/avatars/user0${array.splice(Math.floor(Math.random() * array.length), 1)}.png`;
 };
 const createPlaceCard = function  ()  {
-  let userId = getRandomUserID();
-  const getPhotos = new Array(getRandomNumber(minNumberPhoto,maxNumberPhoto)).fill(null).map(generatePhoto);
-  const getFeatures = new Array(getRandomNumber(minLengthRandomArr,maxLengthRandomArr)).fill(null).map(generateFeatures);
+  const userId = getRandomUserID(USERS_ID);
+  const locationX = getRandomCoordinates(MIN_LOC_COORDINATE_LAT,MAX_LOC_COORDINATE_LAT,NUMBER_AFTER_DOT_LOC);
+  const locationY = getRandomCoordinates(MIN_LOC_COORDINATE_LNG,MAX_LOC_COORDINATE_LNG,NUMBER_AFTER_DOT_LOC);
+  const randomPhotos = new Array(getRandomNumber(0,PHOTOS.length)).fill(null).map(generatePhoto);
+  const randomArrayFeatures = FEATURES.slice(0,getRandomNumber(0,MAX_LENGTH_ARRAY_FEATURES));
   return  {
     Author : {
-      avatar : `img/avatars/user0${userId}.png`,
+      avatar : userId,
     },
     offer : {
       title: getRandomArrayElement(TITLES),
-      address: 1,
+      address: `${locationX}, ${locationY}`,
       price: getRandomArrayElement(PRICE),
       type: getRandomArrayElement(TYPE_PLACE),
-      rooms: getRandomNumber(minNumbScore,maxNumbScore),
-      guests: getRandomNumber(minNumbScore,maxNumbScore),
+      rooms: getRandomNumber(MIN_NUMB_SCORE,MAX_NUMB_SCORE),
+      guests: getRandomNumber(MIN_NUMB_SCORE,MAX_NUMB_SCORE),
       checkin: getRandomArrayElement(CHECK_IN_OUT),
       checkout: getRandomArrayElement(CHECK_IN_OUT),
-      features: getFeatures,
+      features: randomArrayFeatures,
       description: getRandomArrayElement(DESCRIPTION),
-      photos: getPhotos,
+      photos: randomPhotos,
     },
     location : {
       lat: locationX,
@@ -129,7 +119,7 @@ const createPlaceCard = function  ()  {
     },
   };
 };
-const QUANTITY_CARDS = 10;
-const createLocationCards = new Array(QUANTITY_CARDS).fill().map(createPlaceCard);
-// console.log(createPlaceCard())
-console.log(createLocationCards);
+const createArrayCards = function (quantityCards)  {
+  return new Array(quantityCards).fill(null).map(createPlaceCard);
+};
+createArrayCards(QUANTITY_CARDS);
