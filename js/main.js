@@ -123,5 +123,4 @@ const createPlaceCard = function  ()  {
 const createArrayCards = function (quantityCards)  {
   return new Array(quantityCards).fill(null).map(createPlaceCard);
 };
-// createArrayCards(QUANTITY_CARDS);
-console.log(createArrayCards(QUANTITY_CARDS));
+createArrayCards(QUANTITY_CARDS);
