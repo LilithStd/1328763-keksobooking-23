@@ -63,7 +63,7 @@ const MAX_LOC_COORDINATE_LNG= 139.80000;
 const MAX_LENGTH_ARRAY_FEATURES = 6;
 const NUMBER_AFTER_DOT_LOC = 5;
 const QUANTITY_CARDS = 10;
-
+const COPY_USERS_ID = USERS_ID.slice();
 
 const getRandomNumber = function(minNumber,maxNumber) {
   if (minNumber < 0 || maxNumber < 0 || maxNumber <= minNumber) {
@@ -90,14 +90,15 @@ const getRandomUserID = function (array) {
   }
   return `img/avatars/user0${array.splice(Math.floor(Math.random() * array.length), 1)}.png`;
 };
+
 const createPlaceCard = function  ()  {
-  const userId = getRandomUserID(USERS_ID);
+  const userId = getRandomUserID(COPY_USERS_ID);
   const locationX = getRandomCoordinates(MIN_LOC_COORDINATE_LAT,MAX_LOC_COORDINATE_LAT,NUMBER_AFTER_DOT_LOC);
   const locationY = getRandomCoordinates(MIN_LOC_COORDINATE_LNG,MAX_LOC_COORDINATE_LNG,NUMBER_AFTER_DOT_LOC);
   const randomPhotos = new Array(getRandomNumber(0,PHOTOS.length)).fill(null).map(generatePhoto);
   const randomArrayFeatures = FEATURES.slice(0,getRandomNumber(0,MAX_LENGTH_ARRAY_FEATURES));
   return  {
-    Author : {
+    author : {
       avatar : userId,
     },
     offer : {
@@ -122,4 +123,5 @@ const createPlaceCard = function  ()  {
 const createArrayCards = function (quantityCards)  {
   return new Array(quantityCards).fill(null).map(createPlaceCard);
 };
-createArrayCards(QUANTITY_CARDS);
+// createArrayCards(QUANTITY_CARDS);
+console.log(createArrayCards(QUANTITY_CARDS));
