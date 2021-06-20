@@ -76,7 +76,7 @@ randomCards.forEach((cards) => {
   if(cards.offer.type) {
     elementType.textContent = TYPE_PLACE_OBJECT[arrayTypePlace];
   }else{elementType.classList.add('visually-hidden');}
-  if(cards.offer.guests) {
+  if(cards.offer.guests && cards.offer.rooms) {
     elementCapacity.textContent = `${cards.offer.rooms} комнат для ${cards.offer.guests} гостей.`;
   }else{elementCapacity.classList.add('visually-hidden');}
   if(cards.offer.checkin && cards.offer.checkout) {
