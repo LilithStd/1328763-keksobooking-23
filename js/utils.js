@@ -62,7 +62,6 @@ const MIN_LOC_COORDINATE_LNG = 139.70000;
 const MAX_LOC_COORDINATE_LNG= 139.80000;
 const MAX_LENGTH_ARRAY_FEATURES = 6;
 const NUMBER_AFTER_DOT_LOC = 5;
-const QUANTITY_CARDS = 10;
 const COPY_USERS_ID = USERS_ID.slice();
 
 const getRandomNumber = function(minNumber,maxNumber) {
@@ -104,7 +103,7 @@ const createPlaceCard = function  ()  {
     offer : {
       title: getRandomArrayElement(TITLES),
       address: `${locationX}, ${locationY}`,
-      price: getRandomArrayElement(PRICE),
+      price:getRandomArrayElement(PRICE),
       type: getRandomArrayElement(TYPE_PLACE),
       rooms: getRandomNumber(MIN_NUMB_SCORE,MAX_NUMB_SCORE),
       guests: getRandomNumber(MIN_NUMB_SCORE,MAX_NUMB_SCORE),
@@ -124,4 +123,3 @@ const createArrayCards = function (quantityCards)  {
   return new Array(quantityCards).fill(null).map(createPlaceCard);
 };
 export {createArrayCards};
-createArrayCards(QUANTITY_CARDS);
