@@ -31,13 +31,8 @@ randomCards.forEach((cards) => {
   const elementType = cardsElements.querySelector('.popup__type');
   const elementCapacity = cardsElements.querySelector('.popup__text--capacity');
   const elementTime = cardsElements.querySelector('.popup__text--time');
-
-  while(featuresAvailable.firstChild){
-    featuresAvailable.removeChild(featuresAvailable.firstChild);
-  }
-  while(imageContainer.firstChild){
-    imageContainer.removeChild(imageContainer.firstChild);
-  }
+  featuresAvailable.innerHTML = '';
+  imageContainer.innerHTML ='';
   if( arrayFeatures.length === 0) {
     featuresAvailable.classList.add('visually-hidden');
   }
@@ -68,7 +63,8 @@ randomCards.forEach((cards) => {
     elementAddress.textContent = cards.offer.address;
   }else{elementAddress.classList.add('visually-hidden');}
   if(cards.offer.price) {
-    elementPrice.textContent = `${cards.offer.price} ₽/ночь`;
+    elementPrice.textContent = cards.offer.price;
+    elementPrice.insertAdjacentHTML('beforeEnd', '<span>₽/ночь</span>');
   }else{elementPrice.classList.add('visually-hidden');}
   if(cards.offer.description) {
     elementDescription.textContent = cards.offer.description;
