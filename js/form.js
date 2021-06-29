@@ -58,36 +58,42 @@ const valueGuests = document.querySelector('#capacity');
 const typePlace = document.querySelector('#type');
 
 const validationGuestAndRooms = function  ()  {
-  if  (Number(valueRooms.value) === 100 && Number(valueGuests.value) !== 0)  {
+  const numberValueRooms = Number(valueRooms.value);
+  const numberValueGuets = Number(valueGuests.value);
+  if  (numberValueRooms === 100 && numberValueGuets !== 0)  {
     valueRooms.setCustomValidity('Выбранное Вами помещение не повзоляет разместить гостей');
-  }else if(Number(valueGuests.value) === 0 && Number(valueRooms.value) !== 100)  {
+  }else if(numberValueGuets === 0 && numberValueRooms !== 100)  {
     valueGuests.setCustomValidity('Выбранный Вами вариант не повзоляет разместить гостей в стандартных номерах, выберите другой вариант');
-  }else if(Number(valueRooms.value  < Number(valueGuests.value)))  {
+  }else if(numberValueRooms  < numberValueGuets)  {
     valueRooms.setCustomValidity('Превышено количество гостей для выбранного количества комнат');
   }else{valueRooms.setCustomValidity('');
     valueGuests.setCustomValidity('');}
 };
 const checkValidation = function () {
   typePlace.addEventListener('change', () =>  {
-    if  (typePlace.value === 'palace')  {
-      priceInput.placeholder = '10 000';
-      priceInput.min = '10000';
-    }
-    if  (typePlace.value === 'flat')  {
-      priceInput.placeholder = '1 000';
-      priceInput.min = '1000';
-    }
-    if  (typePlace.value === 'bungalow')  {
-      priceInput.placeholder = '0';
-      priceInput.min = '0';
-    }
-    if  (typePlace.value === 'hotel')  {
-      priceInput.placeholder = '3 000';
-      priceInput.min = '3000';
-    }
-    if  (typePlace.value === 'house')  {
-      priceInput.placeholder = '5 000';
-      priceInput.min = '5000';
+    switch  (typePlace.value)  {
+      case 'palace':
+        priceInput.placeholder = '10 000';
+        priceInput.min = '10000';
+        break;
+      case 'flat':
+        priceInput.placeholder = '1 000';
+        priceInput.min = '1000';
+        break;
+      case 'bungalow':
+        priceInput.placeholder = '0';
+        priceInput.min = '0';
+        break;
+      case 'hotel':
+        priceInput.placeholder = '3 000';
+        priceInput.min = '3000';
+        break;
+      case 'house':
+        priceInput.placeholder = '5 000';
+        priceInput.min = '5000';
+        break;
+      default:
+        typePlace.setCustomValidity('Совпадения по имеющимся позициям не найдены');
     }
   });
   valueRooms.addEventListener('change', validationGuestAndRooms);
