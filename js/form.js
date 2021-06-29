@@ -56,6 +56,8 @@ const priceInput = document.querySelector('#price');
 const valueRooms = document.querySelector('#room_number');
 const valueGuests = document.querySelector('#capacity');
 const typePlace = document.querySelector('#type');
+const checkIn = document.querySelector('#timein');
+const checkOut = document.querySelector('#timeout');
 
 const validationGuestAndRooms = function  ()  {
   const numberValueRooms = Number(valueRooms.value);
@@ -94,6 +96,36 @@ const checkValidation = function () {
         break;
       default:
         typePlace.setCustomValidity('Совпадения по имеющимся позициям не найдены');
+    }
+  });
+  checkIn.addEventListener('change', () =>  {
+    switch  (checkIn.value)  {
+      case '12:00':
+        checkOut.options[0].selected = true;
+        break;
+      case '13:00':
+        checkOut.options[1].selected = true;
+        break;
+      case '14:00':
+        checkOut.options[2].selected = true;
+        break;
+      default:
+        typePlace.setCustomValidity('Время въезда не определено');
+    }
+  });
+  checkOut.addEventListener('change', () =>  {
+    switch  (checkOut.value)  {
+      case '12:00':
+        checkIn.options[0].selected = true;
+        break;
+      case '13:00':
+        checkIn.options[1].selected = true;
+        break;
+      case '14:00':
+        checkIn.options[2].selected = true;
+        break;
+      default:
+        typePlace.setCustomValidity('Время выезда не определено');
     }
   });
   valueRooms.addEventListener('change', validationGuestAndRooms);
