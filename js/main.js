@@ -1,8 +1,4 @@
-import {createArrayCards} from './utils.js';
-import './cards.js';
-import {disableForm, enableForm,checkValidation,validationGuestAndRooms} from './form.js';
-disableForm();
-createArrayCards();
+import {checkValidation,validationGuestAndRooms} from './form.js';
+import './map.js';
 checkValidation();
 validationGuestAndRooms();
-enableForm();

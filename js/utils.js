@@ -74,7 +74,7 @@ const getRandomCoordinates  = function  (minCoordinate, maxCoordinate, numberAft
   if (minCoordinate < 0 || maxCoordinate < 0 || maxCoordinate <= minCoordinate) {
     return;
   }
-  const originalNumber = (Math.random() * (maxCoordinate - minCoordinate + 1)) + minCoordinate;
+  const originalNumber = (Math.random() * (maxCoordinate - minCoordinate)) + minCoordinate;
   return originalNumber.toFixed(numberAfterDots);
 };
 const getRandomArrayElement = function  (elements)  {
