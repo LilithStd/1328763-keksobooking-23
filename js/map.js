@@ -75,7 +75,7 @@ markerPin.on('move', (evt) => {
 });
 const RESET_MAP = () =>  {
   defaulAdrressCoordinates;
-  markerGroup.clearLayers();
+  // markerGroup.clearLayers();
   markerPin.setLatLng({
     lat: START_COORDINATES_LAT,
     lng: START_COORDINATES_LNG,
