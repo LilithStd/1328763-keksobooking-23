@@ -1,10 +1,20 @@
-import {disableForm, enableForm} from './form.js';
-import {createArrayCards} from './utils.js';
+import {disableForm, enableForm,checkValidation,validationGuestAndRooms,setUserFormSubmit} from './form.js';
 import {createCustomPopup} from './cards.js';
+import {getData} from './fetch.js';
+import {showAlert} from './alert-modal.js';
+
 const START_COORDINATES_LAT = 35.6895;
 const START_COORDINATES_LNG = 139.69171;
 const NUMBER_AFTER_DOT_ADRESS = 5;
+const RESET_BUTTONS_MAP = document.querySelector('.ad-form__reset');
+const adressLanLng = document.querySelector('#address');
+const addForm = document.querySelector('.ad-form');
+const priceField = addForm.querySelector('#price');
+
 disableForm();
+checkValidation();
+validationGuestAndRooms();
+setUserFormSubmit();
 const mapTokio = L.map('map-canvas')
   .on('load', enableForm)
   .setView({
@@ -17,6 +27,7 @@ L.tileLayer(
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   },
 ).addTo(mapTokio);
+const markerGroup = L.layerGroup().addTo(mapTokio);
 const customPinIcons = L.icon({
   iconUrl: 'img/main-pin.svg',
   iconSize: [52, 52],
@@ -33,13 +44,7 @@ const markerPin = L.marker(
   },
 );
 markerPin.addTo(mapTokio);
-const adressLanLng = document.querySelector('#address');
-adressLanLng.value = `${START_COORDINATES_LAT} ${START_COORDINATES_LNG}`;
-markerPin.on('move', (evt) => {
-  adressLanLng.value = `${evt.target.getLatLng().lat.toFixed(NUMBER_AFTER_DOT_ADRESS)} ${evt.target.getLatLng().lng.toFixed(NUMBER_AFTER_DOT_ADRESS)}`;
-});
-const amountCards = 10;
-createArrayCards(amountCards).forEach((point) => {
+getData((arrayCards)  => {arrayCards.forEach((point) => {
   const {lat, lng} = point.location;
   const icon = L.icon({
     iconUrl: 'img/pin.svg',
@@ -58,8 +63,36 @@ createArrayCards(amountCards).forEach((point) => {
   );
 
   marker
-    .addTo(mapTokio)
+    .addTo(markerGroup)
     .bindPopup(
       createCustomPopup(point),
     );
 });
+},() => showAlert('Ошибка загрузки данных.Попробуйте позже.'));
+const defaulAdrressCoordinates = adressLanLng.value = `${START_COORDINATES_LAT} ${START_COORDINATES_LNG}`;
+markerPin.on('move', (evt) => {
+  adressLanLng.value = `${evt.target.getLatLng().lat.toFixed(NUMBER_AFTER_DOT_ADRESS)} ${evt.target.getLatLng().lng.toFixed(NUMBER_AFTER_DOT_ADRESS)}`;
+});
+const RESET_MAP = () =>  {
+  defaulAdrressCoordinates;
+  markerGroup.clearLayers();
+  markerPin.setLatLng({
+    lat: START_COORDINATES_LAT,
+    lng: START_COORDINATES_LNG,
+  });
+  mapTokio.setView({
+    lat: START_COORDINATES_LAT,
+    lng: START_COORDINATES_LNG,
+  }, 10);
+};
+const formReset = ()  =>  {
+  addForm.reset();
+  priceField.placeholder = '1000';
+  priceField.min = '1000';
+  RESET_MAP();
+};
+RESET_BUTTONS_MAP.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  formReset();
+});
+export{formReset};
