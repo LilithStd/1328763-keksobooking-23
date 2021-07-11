@@ -1,3 +1,5 @@
+import {sendData} from './fetch.js';
+import {createErrorAlert, createSuccessAlert} from './alert-modal.js';
 const addForm = document.querySelectorAll('.ad-form');
 const mapFilters = document.querySelectorAll('.map__filters');
 const mapOptions = document.querySelectorAll('.map__filter');
@@ -150,4 +152,15 @@ const checkValidation = function () {
     }else {priceInput.setCustomValidity('');}
   });
 };
-export {disableForm,enableForm,checkValidation,validationGuestAndRooms};
+const formSubmit = document.querySelector('.ad-form');
+const setUserFormSubmit = () =>  {
+  formSubmit.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    sendData(
+      () => createSuccessAlert(),
+      () => createErrorAlert(),
+      new FormData(evt.target),
+    );
+  });
+};
+export {disableForm,enableForm,checkValidation,validationGuestAndRooms,setUserFormSubmit};

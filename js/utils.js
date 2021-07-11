@@ -119,7 +119,10 @@ const createPlaceCard = function  ()  {
     },
   };
 };
+const isEscEvent = (evt) => {
+  evt.key === 'Escape' || evt.key === 'Esc';
+};
 const createArrayCards = function (quantityCards)  {
   return new Array(quantityCards).fill(null).map(createPlaceCard);
 };
-export {createArrayCards};
+export {createArrayCards, isEscEvent};
