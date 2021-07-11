@@ -43,8 +43,9 @@ const markerPin = L.marker(
     icon: customPinIcons,
   },
 );
+const COUNT_CARDS = 10;
 markerPin.addTo(mapTokio);
-getData((arrayCards)  => {arrayCards.forEach((point) => {
+getData((arrayCards)  => {(arrayCards.slice(0, COUNT_CARDS)).forEach((point) => {
   const {lat, lng} = point.location;
   const icon = L.icon({
     iconUrl: 'img/pin.svg',
@@ -69,13 +70,11 @@ getData((arrayCards)  => {arrayCards.forEach((point) => {
     );
 });
 },() => showAlert('Ошибка загрузки данных.Попробуйте позже.'));
-const defaulAdrressCoordinates = adressLanLng.value = `${START_COORDINATES_LAT} ${START_COORDINATES_LNG}`;
+adressLanLng.value = `${START_COORDINATES_LAT} ${START_COORDINATES_LNG}`;
 markerPin.on('move', (evt) => {
   adressLanLng.value = `${evt.target.getLatLng().lat.toFixed(NUMBER_AFTER_DOT_ADRESS)} ${evt.target.getLatLng().lng.toFixed(NUMBER_AFTER_DOT_ADRESS)}`;
 });
 const RESET_MAP = () =>  {
-  defaulAdrressCoordinates;
-  // markerGroup.clearLayers();
   markerPin.setLatLng({
     lat: START_COORDINATES_LAT,
     lng: START_COORDINATES_LNG,
