@@ -1,5 +1,10 @@
-import {sendData} from './fetch.js';
-import {createErrorAlert, createSuccessAlert} from './alert-modal.js';
+import {
+  sendData
+} from './fetch.js';
+import {
+  createErrorAlert,
+  createSuccessAlert
+} from './alert-modal.js';
 const addForm = document.querySelectorAll('.ad-form');
 const mapFilters = document.querySelectorAll('.map__filters');
 const mapOptions = document.querySelectorAll('.map__filter');
@@ -7,7 +12,16 @@ const mapOptionsIcons = document.querySelectorAll('.map__features');
 const mapFeatures = document.querySelectorAll('.map__checkbox');
 const formElement = document.querySelectorAll('.ad-form__element');
 const formHeader = document.querySelectorAll('.ad-form-header');
-const disableForm = function () {
+const titleInput = document.querySelector('#title');
+const priceInput = document.querySelector('#price');
+const valueRooms = document.querySelector('#room_number');
+const valueGuests = document.querySelector('#capacity');
+const typePlace = document.querySelector('#type');
+const checkIn = document.querySelector('#timein');
+const checkOut = document.querySelector('#timeout');
+const TIME_OUT = 5000;
+
+const disableForm = () => {
   addForm.forEach((item) => {
     item.classList.add('ad-form--disabled');
   });
@@ -30,7 +44,7 @@ const disableForm = function () {
     item.classList.add('disabled');
   });
 };
-const enableForm = function () {
+const enableForm = () => {
   addForm.forEach((item) => {
     item.classList.remove('ad-form--disabled');
   });
@@ -53,29 +67,36 @@ const enableForm = function () {
     item.classList.remove('disabled');
   });
 };
-const titleInput = document.querySelector('#title');
-const priceInput = document.querySelector('#price');
-const valueRooms = document.querySelector('#room_number');
-const valueGuests = document.querySelector('#capacity');
-const typePlace = document.querySelector('#type');
-const checkIn = document.querySelector('#timein');
-const checkOut = document.querySelector('#timeout');
+const removeErrorBorder = (evt) => {
+  evt.style.removeProperty('border');
+};
+const setErrorBorder = (evt) => {
+  evt.style.border = '3px solid red';
+  setTimeout(() => {
+    removeErrorBorder(evt);
+  }, TIME_OUT);
+};
 
-const validationGuestAndRooms = function  ()  {
+const validationGuestAndRooms = () => {
   const numberValueRooms = Number(valueRooms.value);
   const numberValueGuets = Number(valueGuests.value);
-  if  (numberValueRooms === 100 && numberValueGuets !== 0)  {
+  if (numberValueRooms === 100 && numberValueGuets !== 0) {
+    setErrorBorder(valueRooms);
     valueRooms.setCustomValidity('Выбранное Вами помещение не повзоляет разместить гостей');
-  }else if(numberValueGuets === 0 && numberValueRooms !== 100)  {
+  } else if (numberValueGuets === 0 && numberValueRooms !== 100) {
+    setErrorBorder(valueGuests);
     valueGuests.setCustomValidity('Выбранный Вами вариант не повзоляет разместить гостей в стандартных номерах, выберите другой вариант');
-  }else if(numberValueRooms  < numberValueGuets)  {
+  } else if (numberValueRooms < numberValueGuets) {
+    setErrorBorder(valueRooms);
     valueRooms.setCustomValidity('Превышено количество гостей для выбранного количества комнат');
-  }else{valueRooms.setCustomValidity('');
-    valueGuests.setCustomValidity('');}
+  } else {
+    valueRooms.setCustomValidity('');
+    valueGuests.setCustomValidity('');
+  }
 };
-const checkValidation = function () {
-  typePlace.addEventListener('change', () =>  {
-    switch  (typePlace.value)  {
+const checkValidation = () => {
+  typePlace.addEventListener('change', () => {
+    switch (typePlace.value) {
       case 'palace':
         priceInput.placeholder = '10 000';
         priceInput.min = '10000';
@@ -100,8 +121,8 @@ const checkValidation = function () {
         typePlace.setCustomValidity('Совпадения по имеющимся позициям не найдены');
     }
   });
-  checkIn.addEventListener('change', () =>  {
-    switch  (checkIn.value)  {
+  checkIn.addEventListener('change', () => {
+    switch (checkIn.value) {
       case '12:00':
         checkOut.options[0].selected = true;
         break;
@@ -115,8 +136,8 @@ const checkValidation = function () {
         typePlace.setCustomValidity('Время въезда не определено');
     }
   });
-  checkOut.addEventListener('change', () =>  {
-    switch  (checkOut.value)  {
+  checkOut.addEventListener('change', () => {
+    switch (checkOut.value) {
       case '12:00':
         checkIn.options[0].selected = true;
         break;
@@ -134,26 +155,32 @@ const checkValidation = function () {
   valueGuests.addEventListener('change', validationGuestAndRooms);
 
   titleInput.addEventListener('invalid', () => {
-    if (titleInput.validity.tooShort)  {
+    setErrorBorder(titleInput);
+    if (titleInput.validity.tooShort) {
       titleInput.setCustomValidity(`Заголовок должен состоять минимум из ${titleInput.minLength} символов`);
-    }else if (titleInput.validity.tooLong) {
+    } else if (titleInput.validity.tooLong) {
       titleInput.setCustomValidity(`Заголовок не должен превышать ${titleInput.maxlength} символов`);
-    }else if(titleInput.validity.valueMissing)  {
+    } else if (titleInput.validity.valueMissing) {
       titleInput.setCustomValidity('Поле не должно быть пустым');
-    }else{titleInput.setCustomValidity('');}
+    } else {
+      titleInput.setCustomValidity('');
+    }
   });
   priceInput.addEventListener('invalid', () => {
-    if (priceInput.validity.rangeUnderflow)  {
+    setErrorBorder(priceInput);
+    if (priceInput.validity.rangeUnderflow) {
       priceInput.setCustomValidity(`Для данного места цена не может быть меньше ${priceInput.min}`);
-    }else if (priceInput.validity.rangeOverflow) {
+    } else if (priceInput.validity.rangeOverflow) {
       priceInput.setCustomValidity(`Цена не может быть выше ${priceInput.max}`);
-    }else if (priceInput.validity.valueMissing)  {
+    } else if (priceInput.validity.valueMissing) {
       priceInput.setCustomValidity('Поле не должно быть пустым');
-    }else {priceInput.setCustomValidity('');}
+    } else {
+      priceInput.setCustomValidity('');
+    }
   });
 };
 const formSubmit = document.querySelector('.ad-form');
-const setUserFormSubmit = () =>  {
+const setUserFormSubmit = () => {
   formSubmit.addEventListener('submit', (evt) => {
     evt.preventDefault();
     sendData(
@@ -163,4 +190,10 @@ const setUserFormSubmit = () =>  {
     );
   });
 };
-export {disableForm,enableForm,checkValidation,validationGuestAndRooms,setUserFormSubmit};
+export {
+  disableForm,
+  enableForm,
+  checkValidation,
+  validationGuestAndRooms,
+  setUserFormSubmit
+};
