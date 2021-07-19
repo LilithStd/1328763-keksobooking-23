@@ -1,5 +1,9 @@
-import {isEscEvent} from './utils.js';
-import{formReset} from './map.js';
+import {
+  isEscEvent
+} from './utils.js';
+import {
+  formReset
+} from './map.js';
 const ALERT_SHOW_TIME = 5000;
 
 const successAlertTemplate = document.querySelector('#success')
@@ -29,13 +33,13 @@ const hiddenErrorAlert = (() => {
   errorAlert.classList.add('visually-hidden');
 });
 const getEscEvent = () => {
-  if(isEscEvent)  {
+  if (isEscEvent) {
     hiddenSuccessAlert();
     hiddenErrorAlert();
     document.removeEventListener('keydown', getEscEvent);
   }
 };
-const createSuccessAlert = () =>  {
+const createSuccessAlert = () => {
   formReset();
   successAlert.classList.remove('visually-hidden');
   successAlert.addEventListener('click', hiddenSuccessAlert);
@@ -43,7 +47,7 @@ const createSuccessAlert = () =>  {
 };
 
 
-const createErrorAlert = () =>  {
+const createErrorAlert = () => {
   errorAlert.classList.remove('visually-hidden');
   errorAlert.addEventListener('click', hiddenErrorAlert);
   errorButton.addEventListener('click', hiddenErrorAlert);
@@ -70,4 +74,8 @@ const showAlert = (message) => {
     alertContainer.remove();
   }, ALERT_SHOW_TIME);
 };
-export{createSuccessAlert,showAlert,createErrorAlert};
+export {
+  createSuccessAlert,
+  showAlert,
+  createErrorAlert
+};
