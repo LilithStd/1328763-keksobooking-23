@@ -5,6 +5,10 @@ import {
 import {
   debounce
 } from './utils/debounce.js';
+
+const PRICE_VALUE_LOW = 10000;
+const PRICE_VALUE_HIGH = 50000;
+
 const mapFilters = document.querySelector('.map__filters');
 const checkType = (data) => {
   const typePlace = mapFilters.querySelector('#housing-type').value;
@@ -19,11 +23,11 @@ const checkPrice = (data) => {
     case 'any':
       return data.offer.price;
     case 'middle':
-      return data.offer.price >= 10000 && data.offer.price <= 50000;
+      return data.offer.price >= PRICE_VALUE_LOW && data.offer.price <= PRICE_VALUE_HIGH;
     case 'low':
-      return data.offer.price < 10000;
+      return data.offer.price < PRICE_VALUE_LOW;
     case 'high':
-      return data.offer.price > 50000;
+      return data.offer.price > PRICE_VALUE_HIGH;
     default:
       pricePlace.setCustomValidity('Ошибка данных');
   }

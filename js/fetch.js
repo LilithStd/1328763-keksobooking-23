@@ -1,17 +1,20 @@
+import {
+  showAlert
+} from './alert-modal.js';
 const getData = (onSuccess, onFail) => {
   fetch('https://23.javascript.pages.academy/keksobooking/data')
     .then((response) => {
       if (response.ok) {
         return response.json();
       } else {
-        onFail();
+        onFail(showAlert('Ошибка загрузки данных.Попробуйте позже.'));
       }
     })
     .then((arrayCards) => {
       onSuccess(arrayCards);
     })
     .catch(() => {
-      onFail();
+      onFail(showAlert('Ошибка загрузки данных.Попробуйте позже.'));
     });
 };
 
@@ -38,3 +41,4 @@ export {
   getData,
   sendData
 };
+

@@ -1,12 +1,9 @@
 import {
   disableForm,
-  enableForm,
-  checkValidation,
-  validationGuestAndRooms,
-  setUserFormSubmit
+  enableForm
 } from './form.js';
 import {
-  createCustomPopup
+  СreateCustomPopup
 } from './cards.js';
 import {
   getData
@@ -14,24 +11,12 @@ import {
 import {
   filterOffers
 } from './filters.js';
-import {
-  showAlert
-} from './alert-modal.js';
 
 const START_COORDINATES_LAT = 35.6895;
 const START_COORDINATES_LNG = 139.69171;
 const NUMBER_AFTER_DOT_ADRESS = 5;
-const RESET_BUTTONS_MAP = document.querySelector('.ad-form__reset');
 const adressLanLng = document.querySelector('#address');
-const addForm = document.querySelector('.ad-form');
-const priceField = addForm.querySelector('#price');
-const filterForm =  document.querySelector('.map__filters');
-
-
 disableForm();
-checkValidation();
-validationGuestAndRooms();
-setUserFormSubmit();
 const mapTokio = L.map('map-canvas')
   .on('load', enableForm)
   .setView({
@@ -80,7 +65,7 @@ const renderPoints = (points) => {
     marker
       .addTo(markerGroup)
       .bindPopup(
-        createCustomPopup(point),
+        СreateCustomPopup(point),
       );
 
   });
@@ -88,16 +73,11 @@ const renderPoints = (points) => {
 const clearMap = () => {
   markerGroup.clearLayers();
 };
-
-getData((arrayCards) => {
-  renderPoints(arrayCards);
-  filterOffers(arrayCards);
-}, () => showAlert('Ошибка загрузки данных.Попробуйте позже.'));
 adressLanLng.value = `${START_COORDINATES_LAT} ${START_COORDINATES_LNG}`;
 markerPin.on('move', (evt) => {
   adressLanLng.value = `${evt.target.getLatLng().lat.toFixed(NUMBER_AFTER_DOT_ADRESS)} ${evt.target.getLatLng().lng.toFixed(NUMBER_AFTER_DOT_ADRESS)}`;
 });
-const RESET_MAP = () => {
+const ResetMap = () => {
   clearMap();
   markerPin.setLatLng({
     lat: START_COORDINATES_LAT,
@@ -107,21 +87,13 @@ const RESET_MAP = () => {
     lat: START_COORDINATES_LAT,
     lng: START_COORDINATES_LNG,
   }, 10);
+  getData((arrayCards) => {
+    renderPoints(arrayCards);
+    filterOffers(arrayCards);
+  });
 };
-const formReset = () => {
-  addForm.reset();
-  filterForm.reset();
-
-  priceField.placeholder = '1000';
-  priceField.min = '1000';
-  RESET_MAP();
-};
-RESET_BUTTONS_MAP.addEventListener('click', (evt) => {
-  evt.preventDefault();
-  formReset();
-});
 export {
-  formReset,
   clearMap,
-  renderPoints
+  renderPoints,
+  ResetMap
 };

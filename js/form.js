@@ -1,11 +1,28 @@
 import {
+  getData,
   sendData
 } from './fetch.js';
+import {
+  renderPoints,
+  ResetMap
+} from './map.js';
+import {
+  filterOffers
+} from './filters.js';
 import {
   createErrorAlert,
   createSuccessAlert
 } from './alert-modal.js';
-const addForm = document.querySelectorAll('.ad-form');
+
+const TIME_OUT = 1000;
+const PRICE_PALACE = '10000';
+const PRICE_FLAT = '1000';
+const PRICE_BUNGALOW = '0';
+const PRICE_HOTEL = '3000';
+const PRICE_HOUSE = '5000';
+const addForm = document.querySelector('.ad-form');
+const addForms = document.querySelectorAll('.ad-form');
+const mapFilter = document.querySelector('.map__filters');
 const mapFilters = document.querySelectorAll('.map__filters');
 const mapOptions = document.querySelectorAll('.map__filter');
 const mapOptionsIcons = document.querySelectorAll('.map__features');
@@ -19,54 +36,8 @@ const valueGuests = document.querySelector('#capacity');
 const typePlace = document.querySelector('#type');
 const checkIn = document.querySelector('#timein');
 const checkOut = document.querySelector('#timeout');
-const TIME_OUT = 5000;
+const resetMapButton = document.querySelector('.ad-form__reset');
 
-const disableForm = () => {
-  addForm.forEach((item) => {
-    item.classList.add('ad-form--disabled');
-  });
-  mapFilters.forEach((item) => {
-    item.classList.add('map__filters--disabled');
-  });
-  mapOptions.forEach((item) => {
-    item.classList.add('disabled');
-  });
-  mapOptionsIcons.forEach((item) => {
-    item.classList.add('disabled');
-  });
-  formElement.forEach((item) => {
-    item.classList.add('disabled');
-  });
-  formHeader.forEach((item) => {
-    item.classList.add('disabled');
-  });
-  mapFeatures.forEach((item) => {
-    item.classList.add('disabled');
-  });
-};
-const enableForm = () => {
-  addForm.forEach((item) => {
-    item.classList.remove('ad-form--disabled');
-  });
-  mapFilters.forEach((item) => {
-    item.classList.remove('map__filters--disabled');
-  });
-  mapOptions.forEach((item) => {
-    item.classList.remove('disabled');
-  });
-  mapOptionsIcons.forEach((item) => {
-    item.classList.remove('disabled');
-  });
-  formElement.forEach((item) => {
-    item.classList.remove('disabled');
-  });
-  formHeader.forEach((item) => {
-    item.classList.remove('disabled');
-  });
-  mapFeatures.forEach((item) => {
-    item.classList.remove('disabled');
-  });
-};
 const removeErrorBorder = (evt) => {
   evt.style.removeProperty('border');
 };
@@ -98,24 +69,24 @@ const checkValidation = () => {
   typePlace.addEventListener('change', () => {
     switch (typePlace.value) {
       case 'palace':
-        priceInput.placeholder = '10 000';
-        priceInput.min = '10000';
+        priceInput.placeholder = PRICE_PALACE;
+        priceInput.min = PRICE_PALACE;
         break;
       case 'flat':
-        priceInput.placeholder = '1 000';
-        priceInput.min = '1000';
+        priceInput.placeholder = PRICE_FLAT;
+        priceInput.min = PRICE_FLAT;
         break;
       case 'bungalow':
-        priceInput.placeholder = '0';
-        priceInput.min = '0';
+        priceInput.placeholder = PRICE_BUNGALOW;
+        priceInput.min = PRICE_BUNGALOW;
         break;
       case 'hotel':
-        priceInput.placeholder = '3 000';
-        priceInput.min = '3000';
+        priceInput.placeholder = PRICE_HOTEL;
+        priceInput.min = PRICE_HOTEL;
         break;
       case 'house':
-        priceInput.placeholder = '5 000';
-        priceInput.min = '5000';
+        priceInput.placeholder = PRICE_HOUSE;
+        priceInput.min = PRICE_HOUSE;
         break;
       default:
         typePlace.setCustomValidity('Совпадения по имеющимся позициям не найдены');
@@ -154,34 +125,37 @@ const checkValidation = () => {
   valueRooms.addEventListener('change', validationGuestAndRooms);
   valueGuests.addEventListener('change', validationGuestAndRooms);
 
-  titleInput.addEventListener('invalid', () => {
-    setErrorBorder(titleInput);
+  titleInput.addEventListener('change', () => {
     if (titleInput.validity.tooShort) {
+      setErrorBorder(titleInput);
       titleInput.setCustomValidity(`Заголовок должен состоять минимум из ${titleInput.minLength} символов`);
     } else if (titleInput.validity.tooLong) {
+      setErrorBorder(priceInput);
       titleInput.setCustomValidity(`Заголовок не должен превышать ${titleInput.maxlength} символов`);
     } else if (titleInput.validity.valueMissing) {
+      setErrorBorder(priceInput);
       titleInput.setCustomValidity('Поле не должно быть пустым');
     } else {
       titleInput.setCustomValidity('');
     }
   });
-  priceInput.addEventListener('invalid', () => {
-    setErrorBorder(priceInput);
+  priceInput.addEventListener('change', () => {
     if (priceInput.validity.rangeUnderflow) {
+      setErrorBorder(priceInput);
       priceInput.setCustomValidity(`Для данного места цена не может быть меньше ${priceInput.min}`);
     } else if (priceInput.validity.rangeOverflow) {
+      setErrorBorder(priceInput);
       priceInput.setCustomValidity(`Цена не может быть выше ${priceInput.max}`);
     } else if (priceInput.validity.valueMissing) {
+      setErrorBorder(priceInput);
       priceInput.setCustomValidity('Поле не должно быть пустым');
     } else {
       priceInput.setCustomValidity('');
     }
   });
 };
-const formSubmit = document.querySelector('.ad-form');
-const setUserFormSubmit = () => {
-  formSubmit.addEventListener('submit', (evt) => {
+const SetUserFormSubmit = () => {
+  addForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     sendData(
       () => createSuccessAlert(),
@@ -190,10 +164,76 @@ const setUserFormSubmit = () => {
     );
   });
 };
+const FormReset = () => {
+  addForm.reset();
+  mapFilter.reset();
+  priceInput.placeholder = PRICE_FLAT;
+  priceInput.min = PRICE_FLAT;
+  ResetMap();
+};
+const disableForm = () => {
+  addForms.forEach((item) => {
+    item.classList.add('ad-form--disabled');
+  });
+  mapFilters.forEach((item) => {
+    item.classList.add('map__filters--disabled');
+  });
+  mapOptions.forEach((item) => {
+    item.classList.add('disabled');
+  });
+  mapOptionsIcons.forEach((item) => {
+    item.classList.add('disabled');
+  });
+  formElement.forEach((item) => {
+    item.classList.add('disabled');
+  });
+  formHeader.forEach((item) => {
+    item.classList.add('disabled');
+  });
+  mapFeatures.forEach((item) => {
+    item.classList.add('disabled');
+  });
+};
+const enableFormsAndValidation = ()  =>  {
+  FormReset();
+  addForms.forEach((item) => {
+    item.classList.remove('ad-form--disabled');
+  });
+  mapFilters.forEach((item) => {
+    item.classList.remove('map__filters--disabled');
+  });
+  mapOptions.forEach((item) => {
+    item.classList.remove('disabled');
+  });
+  mapOptionsIcons.forEach((item) => {
+    item.classList.remove('disabled');
+  });
+  formElement.forEach((item) => {
+    item.classList.remove('disabled');
+  });
+  formHeader.forEach((item) => {
+    item.classList.remove('disabled');
+  });
+  mapFeatures.forEach((item) => {
+    item.classList.remove('disabled');
+  });
+  resetMapButton.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    FormReset();
+  });
+  checkValidation();
+  validationGuestAndRooms();
+  SetUserFormSubmit();
+};
+const enableForm = () => {
+  getData((arrayCards) => {
+    renderPoints(arrayCards);
+    filterOffers(arrayCards);
+    enableFormsAndValidation();
+  });
+};
 export {
   disableForm,
   enableForm,
-  checkValidation,
-  validationGuestAndRooms,
-  setUserFormSubmit
+  FormReset
 };

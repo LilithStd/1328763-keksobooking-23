@@ -6,7 +6,7 @@ const TYPE_PLACE_OBJECT = {
   hotel: 'Отель',
 };
 
-const createCustomPopup = (point) => {
+const СreateCustomPopup = (point) => {
   const balloonTemplate = document.querySelector('#card').content.querySelector('.popup');
   const popupElement = balloonTemplate.cloneNode(true);
   const arrayImagesPlace = point.offer.photos;
@@ -73,5 +73,6 @@ const createCustomPopup = (point) => {
   return popupElement;
 };
 export {
-  createCustomPopup
+  СreateCustomPopup
 };
+
