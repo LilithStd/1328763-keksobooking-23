@@ -54,7 +54,7 @@ const checkFeatures = (data) => {
   }
   return arrayFeaturesChecked.every((feature) => arrayFeatures.includes(feature.value));
 };
-const filterOffers = (offers) => {
+const setFilterFormChangeHandler = (offers) => {
   mapFilters.addEventListener('change', debounce(() => {
     clearMap();
     renderPoints(offers.filter((offer) => checkType(offer) && checkPrice(offer) && checkRooms(offer) && checkGuests(offer) && checkFeatures(offer)));
@@ -62,5 +62,5 @@ const filterOffers = (offers) => {
 };
 
 export {
-  filterOffers
+  setFilterFormChangeHandler
 };

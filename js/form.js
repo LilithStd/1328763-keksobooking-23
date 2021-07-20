@@ -4,10 +4,10 @@ import {
 } from './fetch.js';
 import {
   renderPoints,
-  ResetMap
+  resetMap
 } from './map.js';
 import {
-  filterOffers
+  setFilterFormChangeHandler
 } from './filters.js';
 import {
   createErrorAlert,
@@ -25,7 +25,7 @@ const addForms = document.querySelectorAll('.ad-form');
 const mapFilter = document.querySelector('.map__filters');
 const mapFilters = document.querySelectorAll('.map__filters');
 const mapOptions = document.querySelectorAll('.map__filter');
-const mapOptionsIcons = document.querySelectorAll('.map__features');
+const mapOptionsFeatures = document.querySelectorAll('.map__features');
 const mapFeatures = document.querySelectorAll('.map__checkbox');
 const formElement = document.querySelectorAll('.ad-form__element');
 const formHeader = document.querySelectorAll('.ad-form-header');
@@ -48,7 +48,7 @@ const setErrorBorder = (evt) => {
   }, TIME_OUT);
 };
 
-const validationGuestAndRooms = () => {
+const validateGuestsAndRooms = () => {
   const numberValueRooms = Number(valueRooms.value);
   const numberValueGuets = Number(valueGuests.value);
   if (numberValueRooms === 100 && numberValueGuets !== 0) {
@@ -122,8 +122,8 @@ const checkValidation = () => {
         typePlace.setCustomValidity('Время выезда не определено');
     }
   });
-  valueRooms.addEventListener('change', validationGuestAndRooms);
-  valueGuests.addEventListener('change', validationGuestAndRooms);
+  valueRooms.addEventListener('change', validateGuestsAndRooms);
+  valueGuests.addEventListener('change', validateGuestsAndRooms);
 
   titleInput.addEventListener('change', () => {
     if (titleInput.validity.tooShort) {
@@ -154,7 +154,7 @@ const checkValidation = () => {
     }
   });
 };
-const SetUserFormSubmit = () => {
+const setUserFormSubmit = () => {
   addForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     sendData(
@@ -164,12 +164,13 @@ const SetUserFormSubmit = () => {
     );
   });
 };
-const FormReset = () => {
+const formReset = () => {
   addForm.reset();
   mapFilter.reset();
+  validateGuestsAndRooms();
   priceInput.placeholder = PRICE_FLAT;
   priceInput.min = PRICE_FLAT;
-  ResetMap();
+  resetMap();
 };
 const disableForm = () => {
   addForms.forEach((item) => {
@@ -181,7 +182,7 @@ const disableForm = () => {
   mapOptions.forEach((item) => {
     item.classList.add('disabled');
   });
-  mapOptionsIcons.forEach((item) => {
+  mapOptionsFeatures.forEach((item) => {
     item.classList.add('disabled');
   });
   formElement.forEach((item) => {
@@ -194,46 +195,49 @@ const disableForm = () => {
     item.classList.add('disabled');
   });
 };
-const enableFormsAndValidation = ()  =>  {
-  FormReset();
+const enableFormsAds = () => {
   addForms.forEach((item) => {
     item.classList.remove('ad-form--disabled');
   });
+  formHeader.forEach((item) => {
+    item.classList.remove('disabled');
+  });
+  formElement.forEach((item) => {
+    item.classList.remove('disabled');
+  });
+  resetMapButton.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    formReset();
+  });
+  checkValidation();
+  validateGuestsAndRooms();
+  setUserFormSubmit();
+};
+const enableFiltersAds = () => {
+  formReset();
   mapFilters.forEach((item) => {
     item.classList.remove('map__filters--disabled');
   });
   mapOptions.forEach((item) => {
     item.classList.remove('disabled');
   });
-  mapOptionsIcons.forEach((item) => {
-    item.classList.remove('disabled');
-  });
-  formElement.forEach((item) => {
-    item.classList.remove('disabled');
-  });
-  formHeader.forEach((item) => {
+  mapOptionsFeatures.forEach((item) => {
     item.classList.remove('disabled');
   });
   mapFeatures.forEach((item) => {
     item.classList.remove('disabled');
   });
-  resetMapButton.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    FormReset();
-  });
-  checkValidation();
-  validationGuestAndRooms();
-  SetUserFormSubmit();
 };
 const enableForm = () => {
+  enableFormsAds();
   getData((arrayCards) => {
     renderPoints(arrayCards);
-    filterOffers(arrayCards);
-    enableFormsAndValidation();
+    setFilterFormChangeHandler(arrayCards);
+    enableFiltersAds();
   });
 };
 export {
   disableForm,
   enableForm,
-  FormReset
+  formReset
 };

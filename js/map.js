@@ -3,13 +3,13 @@ import {
   enableForm
 } from './form.js';
 import {
-  СreateCustomPopup
+  createCustomPopup
 } from './cards.js';
 import {
   getData
 } from './fetch.js';
 import {
-  filterOffers
+  setFilterFormChangeHandler
 } from './filters.js';
 
 const START_COORDINATES_LAT = 35.6895;
@@ -65,7 +65,7 @@ const renderPoints = (points) => {
     marker
       .addTo(markerGroup)
       .bindPopup(
-        СreateCustomPopup(point),
+        createCustomPopup(point),
       );
 
   });
@@ -77,7 +77,7 @@ adressLanLng.value = `${START_COORDINATES_LAT} ${START_COORDINATES_LNG}`;
 markerPin.on('move', (evt) => {
   adressLanLng.value = `${evt.target.getLatLng().lat.toFixed(NUMBER_AFTER_DOT_ADRESS)} ${evt.target.getLatLng().lng.toFixed(NUMBER_AFTER_DOT_ADRESS)}`;
 });
-const ResetMap = () => {
+const resetMap = () => {
   clearMap();
   markerPin.setLatLng({
     lat: START_COORDINATES_LAT,
@@ -89,11 +89,11 @@ const ResetMap = () => {
   }, 10);
   getData((arrayCards) => {
     renderPoints(arrayCards);
-    filterOffers(arrayCards);
+    setFilterFormChangeHandler(arrayCards);
   });
 };
 export {
   clearMap,
   renderPoints,
-  ResetMap
+  resetMap
 };

@@ -1,4 +1,4 @@
-const TYPE_PLACE_OBJECT = {
+const TypePlaceObject = {
   flat: 'Квартира',
   bungalow: 'Бунгало',
   house: 'Дом',
@@ -6,7 +6,7 @@ const TYPE_PLACE_OBJECT = {
   hotel: 'Отель',
 };
 
-const СreateCustomPopup = (point) => {
+const createCustomPopup = (point) => {
   const balloonTemplate = document.querySelector('#card').content.querySelector('.popup');
   const popupElement = balloonTemplate.cloneNode(true);
   const arrayImagesPlace = point.offer.photos;
@@ -38,7 +38,7 @@ const СreateCustomPopup = (point) => {
   }
 
   if (point.offer.type) {
-    popupElement.querySelector('.popup__type').textContent = TYPE_PLACE_OBJECT[point.offer.type];
+    popupElement.querySelector('.popup__type').textContent = TypePlaceObject[point.offer.type];
   } else {
     popupElement.querySelector('.popup__type').classList.add('visually-hidden');
   }
@@ -73,6 +73,6 @@ const СreateCustomPopup = (point) => {
   return popupElement;
 };
 export {
-  СreateCustomPopup
+  createCustomPopup
 };
 
