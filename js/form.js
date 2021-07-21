@@ -214,7 +214,6 @@ const enableFormsAds = () => {
   setUserFormSubmit();
 };
 const enableFiltersAds = () => {
-  formReset();
   mapFilters.forEach((item) => {
     item.classList.remove('map__filters--disabled');
   });
