@@ -1,3 +1,6 @@
+const IMG_WIDTH = 45;
+const IMG_HEIGHT = 40;
+
 const TypePlaceObject = {
   flat: 'Квартира',
   bungalow: 'Бунгало',
@@ -30,8 +33,8 @@ const createCustomPopup = (point) => {
       const newImg = document.createElement('img');
       newImg.src = arrayImagesPlace[ind];
       newImg.alt = 'Фотография жилья';
-      newImg.width = 45;
-      newImg.height = 40;
+      newImg.width = IMG_WIDTH;
+      newImg.height = IMG_HEIGHT;
       newImg.classList.add('popup__photo');
       popupElement.querySelector('.popup__photos').appendChild(newImg);
     }
@@ -72,6 +75,7 @@ const createCustomPopup = (point) => {
   popupElement.querySelector('.popup__text--address').textContent = point.offer.address;
   return popupElement;
 };
+
 export {
   createCustomPopup
 };

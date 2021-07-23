@@ -1,6 +1,7 @@
 import {
   formReset
 } from './form.js';
+
 const ALERT_SHOW_TIME = 5000;
 
 const successAlertTemplate = document.querySelector('#success')
@@ -23,32 +24,34 @@ elementBody.appendChild(documentFragmentAlert);
 errorAlert.classList.add('visually-hidden');
 const errorButton = errorAlert.querySelector('.error__button');
 
-const hideSuccessAlert = (() => {
+const hideSuccessAlertClickHandler = (() => {
   successAlert.classList.add('visually-hidden');
 });
-const hideErrorAlert = (() => {
+
+const hideErrorAlertClickHandler = (() => {
   errorAlert.classList.add('visually-hidden');
 });
-const isEscEvent = (evt) => {
+
+const isEscEventHandler = (evt) => {
   if (evt.key === 'Escape' || evt.key === 'Esc') {
-    hideSuccessAlert();
-    hideErrorAlert();
-    document.removeEventListener('keydown', isEscEvent);
+    hideSuccessAlertClickHandler();
+    hideErrorAlertClickHandler();
+    document.removeEventListener('keydown', isEscEventHandler);
   }
 };
 const createSuccessAlert = () => {
   formReset();
   successAlert.classList.remove('visually-hidden');
-  successAlert.addEventListener('click', hideSuccessAlert);
-  document.addEventListener('keydown', isEscEvent);
+  successAlert.addEventListener('click', hideSuccessAlertClickHandler);
+  document.addEventListener('keydown', isEscEventHandler);
 };
 
 
 const createErrorAlert = () => {
   errorAlert.classList.remove('visually-hidden');
-  errorAlert.addEventListener('click', hideErrorAlert);
-  errorButton.addEventListener('click', hideErrorAlert);
-  document.addEventListener('keydown', isEscEvent);
+  errorAlert.addEventListener('click', hideErrorAlertClickHandler);
+  errorButton.addEventListener('click', hideErrorAlertClickHandler);
+  document.addEventListener('keydown', isEscEventHandler);
 };
 
 const showAlert = (message) => {
@@ -71,6 +74,7 @@ const showAlert = (message) => {
     alertContainer.remove();
   }, ALERT_SHOW_TIME);
 };
+
 export {
   createSuccessAlert,
   showAlert,

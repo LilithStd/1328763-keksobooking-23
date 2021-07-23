@@ -1,25 +1,42 @@
 import {
-  getData,
   sendData
 } from './fetch.js';
 import {
-  renderPoints,
   resetMap
 } from './map.js';
-import {
-  setFilterFormChangeHandler
-} from './filters.js';
 import {
   createErrorAlert,
   createSuccessAlert
 } from './alert-modal.js';
-
+const FILE_TYPES = [
+  'gif', 'jpg', 'jpeg', 'png',
+];
+const DEFAULT_AVATAR_SRC = 'img/muffin-grey.svg';
+const DEFAULT_HOUSING_PLACE_SRC = 'img/muffin-white.svg';
 const TIME_OUT = 1000;
 const PRICE_PALACE = '10000';
 const PRICE_FLAT = '1000';
 const PRICE_BUNGALOW = '0';
 const PRICE_HOTEL = '3000';
 const PRICE_HOUSE = '5000';
+const TYPE_PLACE_ONE = 'palace';
+const TYPE_PLACE_TWO = 'flat';
+const TYPE_PLACE_THREE = 'bungalow';
+const TYPE_PLACE_FOUR = 'hotel';
+const TYPE_PLACE_FIVE = 'house';
+const CHECK_IN_OUT_FIRST_TIME = '12:00';
+const CHECK_IN_OUT_SECOUND_TIME = '13:00';
+const CHECK_IN_OUT_THIRD_TIME = '14:00';
+const OPTIONS_VALUE_NULL = 0;
+const OPTIONS_VALUE_ONE = 1;
+const OPTIONS_VALUE_TWO = 2;
+const VALUE_ROOMS_NOT_FOR_GUESTS = 100;
+const VALUE_GUESTS_NOT_FOR_PLACE = 0;
+
+const fileChooserAvatar = document.querySelector('.ad-form__field input[type=file]');
+const previewAvatar = document.querySelector('.ad-form-header__preview img');
+const fileChooserHousing = document.querySelector('.ad-form__upload input[type=file]');
+const previewHousing = document.querySelector('.ad-form__photo img');
 const addForm = document.querySelector('.ad-form');
 const addForms = document.querySelectorAll('.ad-form');
 const mapFilter = document.querySelector('.map__filters');
@@ -41,6 +58,7 @@ const resetMapButton = document.querySelector('.ad-form__reset');
 const removeErrorBorder = (evt) => {
   evt.style.removeProperty('border');
 };
+
 const setErrorBorder = (evt) => {
   evt.style.border = '3px solid red';
   setTimeout(() => {
@@ -48,13 +66,13 @@ const setErrorBorder = (evt) => {
   }, TIME_OUT);
 };
 
-const validateGuestsAndRooms = () => {
+const validaChangeteGuestsAndRoomsHandler = () => {
   const numberValueRooms = Number(valueRooms.value);
   const numberValueGuets = Number(valueGuests.value);
-  if (numberValueRooms === 100 && numberValueGuets !== 0) {
+  if (numberValueRooms === VALUE_ROOMS_NOT_FOR_GUESTS && numberValueGuets !== VALUE_GUESTS_NOT_FOR_PLACE) {
     setErrorBorder(valueRooms);
     valueRooms.setCustomValidity('Выбранное Вами помещение не повзоляет разместить гостей');
-  } else if (numberValueGuets === 0 && numberValueRooms !== 100) {
+  } else if (numberValueGuets === VALUE_GUESTS_NOT_FOR_PLACE && numberValueRooms !== VALUE_ROOMS_NOT_FOR_GUESTS) {
     setErrorBorder(valueGuests);
     valueGuests.setCustomValidity('Выбранный Вами вариант не повзоляет разместить гостей в стандартных номерах, выберите другой вариант');
   } else if (numberValueRooms < numberValueGuets) {
@@ -65,26 +83,27 @@ const validateGuestsAndRooms = () => {
     valueGuests.setCustomValidity('');
   }
 };
+
 const checkValidation = () => {
   typePlace.addEventListener('change', () => {
     switch (typePlace.value) {
-      case 'palace':
+      case TYPE_PLACE_ONE:
         priceInput.placeholder = PRICE_PALACE;
         priceInput.min = PRICE_PALACE;
         break;
-      case 'flat':
+      case TYPE_PLACE_TWO:
         priceInput.placeholder = PRICE_FLAT;
         priceInput.min = PRICE_FLAT;
         break;
-      case 'bungalow':
+      case TYPE_PLACE_THREE:
         priceInput.placeholder = PRICE_BUNGALOW;
         priceInput.min = PRICE_BUNGALOW;
         break;
-      case 'hotel':
+      case TYPE_PLACE_FOUR:
         priceInput.placeholder = PRICE_HOTEL;
         priceInput.min = PRICE_HOTEL;
         break;
-      case 'house':
+      case TYPE_PLACE_FIVE:
         priceInput.placeholder = PRICE_HOUSE;
         priceInput.min = PRICE_HOUSE;
         break;
@@ -92,68 +111,103 @@ const checkValidation = () => {
         typePlace.setCustomValidity('Совпадения по имеющимся позициям не найдены');
     }
   });
+
   checkIn.addEventListener('change', () => {
     switch (checkIn.value) {
-      case '12:00':
-        checkOut.options[0].selected = true;
+      case CHECK_IN_OUT_FIRST_TIME:
+        checkOut.options[OPTIONS_VALUE_NULL].selected = true;
         break;
-      case '13:00':
-        checkOut.options[1].selected = true;
+      case CHECK_IN_OUT_SECOUND_TIME:
+        checkOut.options[OPTIONS_VALUE_ONE].selected = true;
         break;
-      case '14:00':
-        checkOut.options[2].selected = true;
+      case CHECK_IN_OUT_THIRD_TIME:
+        checkOut.options[OPTIONS_VALUE_TWO].selected = true;
         break;
       default:
         typePlace.setCustomValidity('Время въезда не определено');
     }
   });
+
   checkOut.addEventListener('change', () => {
     switch (checkOut.value) {
-      case '12:00':
-        checkIn.options[0].selected = true;
+      case CHECK_IN_OUT_FIRST_TIME:
+        checkIn.options[OPTIONS_VALUE_NULL].selected = true;
         break;
-      case '13:00':
-        checkIn.options[1].selected = true;
+      case CHECK_IN_OUT_SECOUND_TIME:
+        checkIn.options[OPTIONS_VALUE_ONE].selected = true;
         break;
-      case '14:00':
-        checkIn.options[2].selected = true;
+      case CHECK_IN_OUT_THIRD_TIME:
+        checkIn.options[OPTIONS_VALUE_TWO].selected = true;
         break;
       default:
         typePlace.setCustomValidity('Время выезда не определено');
     }
   });
-  valueRooms.addEventListener('change', validateGuestsAndRooms);
-  valueGuests.addEventListener('change', validateGuestsAndRooms);
+
+  valueRooms.addEventListener('change', validaChangeteGuestsAndRoomsHandler);
+  valueGuests.addEventListener('change', validaChangeteGuestsAndRoomsHandler);
 
   titleInput.addEventListener('change', () => {
     if (titleInput.validity.tooShort) {
       setErrorBorder(titleInput);
       titleInput.setCustomValidity(`Заголовок должен состоять минимум из ${titleInput.minLength} символов`);
-    } else if (titleInput.validity.tooLong) {
-      setErrorBorder(priceInput);
-      titleInput.setCustomValidity(`Заголовок не должен превышать ${titleInput.maxlength} символов`);
-    } else if (titleInput.validity.valueMissing) {
-      setErrorBorder(priceInput);
-      titleInput.setCustomValidity('Поле не должно быть пустым');
-    } else {
-      titleInput.setCustomValidity('');
     }
+    if (titleInput.validity.tooLong) {
+      setErrorBorder(titleInput);
+      titleInput.setCustomValidity(`Заголовок не должен превышать ${titleInput.maxlength} символов`);
+    }
+    if (titleInput.validity.valueMissing) {
+      setErrorBorder(titleInput);
+      titleInput.setCustomValidity('Поле не должно быть пустым');
+    }
+    titleInput.setCustomValidity('');
   });
+
   priceInput.addEventListener('change', () => {
     if (priceInput.validity.rangeUnderflow) {
       setErrorBorder(priceInput);
       priceInput.setCustomValidity(`Для данного места цена не может быть меньше ${priceInput.min}`);
-    } else if (priceInput.validity.rangeOverflow) {
+    }
+    if (priceInput.validity.rangeOverflow) {
       setErrorBorder(priceInput);
       priceInput.setCustomValidity(`Цена не может быть выше ${priceInput.max}`);
-    } else if (priceInput.validity.valueMissing) {
+    }
+    if (priceInput.validity.valueMissing) {
       setErrorBorder(priceInput);
       priceInput.setCustomValidity('Поле не должно быть пустым');
-    } else {
-      priceInput.setCustomValidity('');
+    }
+    priceInput.setCustomValidity('');
+
+  });
+
+  fileChooserAvatar.addEventListener('change', () => {
+    const file = fileChooserAvatar.files[0];
+    const fileName = file.name.toLowerCase();
+    const matches = FILE_TYPES.some((item) => fileName.endsWith(item));
+    if (matches) {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
+        previewAvatar.src = reader.result;
+      });
+      reader.readAsDataURL(file);
+    }
+  });
+  fileChooserHousing.addEventListener('change', () => {
+    const file = fileChooserHousing.files[0];
+    const fileName = file.name.toLowerCase();
+    const matches = FILE_TYPES.some((item) => fileName.endsWith(item));
+
+    if (matches) {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
+        previewHousing.src = reader.result;
+      });
+      reader.readAsDataURL(file);
+
     }
   });
 };
+
 const setUserFormSubmit = () => {
   addForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
@@ -164,14 +218,19 @@ const setUserFormSubmit = () => {
     );
   });
 };
+
 const formReset = () => {
   addForm.reset();
   mapFilter.reset();
-  validateGuestsAndRooms();
+  validaChangeteGuestsAndRoomsHandler();
   priceInput.placeholder = PRICE_FLAT;
   priceInput.min = PRICE_FLAT;
+  previewAvatar.src = DEFAULT_AVATAR_SRC;
+  previewHousing.src = DEFAULT_HOUSING_PLACE_SRC;
   resetMap();
+
 };
+
 const disableForm = () => {
   addForms.forEach((item) => {
     item.classList.add('ad-form--disabled');
@@ -195,7 +254,8 @@ const disableForm = () => {
     item.classList.add('disabled');
   });
 };
-const enableFormsAds = () => {
+
+const enableFormAds = () => {
   addForms.forEach((item) => {
     item.classList.remove('ad-form--disabled');
   });
@@ -210,9 +270,10 @@ const enableFormsAds = () => {
     formReset();
   });
   checkValidation();
-  validateGuestsAndRooms();
+  validaChangeteGuestsAndRoomsHandler();
   setUserFormSubmit();
 };
+
 const enableFiltersAds = () => {
   mapFilters.forEach((item) => {
     item.classList.remove('map__filters--disabled');
@@ -227,16 +288,10 @@ const enableFiltersAds = () => {
     item.classList.remove('disabled');
   });
 };
-const enableForm = () => {
-  enableFormsAds();
-  getData((arrayCards) => {
-    renderPoints(arrayCards);
-    setFilterFormChangeHandler(arrayCards);
-    enableFiltersAds();
-  });
-};
+
 export {
+  enableFormAds,
   disableForm,
-  enableForm,
+  enableFiltersAds,
   formReset
 };

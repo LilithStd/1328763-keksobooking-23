@@ -1,6 +1,7 @@
 import {
   showAlert
 } from './alert-modal.js';
+
 const getData = (onSuccess, onFail) => {
   fetch('https://23.javascript.pages.academy/keksobooking/data')
     .then((response) => {
