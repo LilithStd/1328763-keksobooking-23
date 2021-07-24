@@ -4,7 +4,7 @@ import {
 import {
   disableForm,
   enableFiltersAds,
-  enableFormAds
+  enableFormAdsClickHandler
 } from './form.js';
 import {
   getData
@@ -18,7 +18,7 @@ import {
 
 disableForm();
 initMap(() => {
-  enableFormAds();
+  enableFormAdsClickHandler();
   getData((arrayCards) => {
     renderPoints(arrayCards);
     setFilterFormChangeHandler(arrayCards);

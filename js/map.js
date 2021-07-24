@@ -90,9 +90,9 @@ const resetMap = () => {
   });
 };
 
-const initMap = (onMapLoad) => {
+const initMap = (mapLoadHandler) => {
   mapTokio = L.map('map-canvas')
-    .on('load', onMapLoad)
+    .on('load', mapLoadHandler)
     .setView({
       lat: START_COORDINATES_LAT,
       lng: START_COORDINATES_LNG,

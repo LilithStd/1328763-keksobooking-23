@@ -32,26 +32,26 @@ const hideErrorAlertClickHandler = (() => {
   errorAlert.classList.add('visually-hidden');
 });
 
-const isEscEventHandler = (evt) => {
+const documentKeydownHandler = (evt) => {
   if (evt.key === 'Escape' || evt.key === 'Esc') {
     hideSuccessAlertClickHandler();
     hideErrorAlertClickHandler();
-    document.removeEventListener('keydown', isEscEventHandler);
+    document.removeEventListener('keydown', documentKeydownHandler);
   }
 };
-const createSuccessAlert = () => {
+
+const createSuccessAlertClickHandler = () => {
   formReset();
   successAlert.classList.remove('visually-hidden');
   successAlert.addEventListener('click', hideSuccessAlertClickHandler);
-  document.addEventListener('keydown', isEscEventHandler);
+  document.addEventListener('keydown', documentKeydownHandler);
 };
 
-
-const createErrorAlert = () => {
+const createErrorAlertClickHandler = () => {
   errorAlert.classList.remove('visually-hidden');
   errorAlert.addEventListener('click', hideErrorAlertClickHandler);
   errorButton.addEventListener('click', hideErrorAlertClickHandler);
-  document.addEventListener('keydown', isEscEventHandler);
+  document.addEventListener('keydown', documentKeydownHandler);
 };
 
 const showAlert = (message) => {
@@ -76,7 +76,7 @@ const showAlert = (message) => {
 };
 
 export {
-  createSuccessAlert,
+  createSuccessAlertClickHandler,
   showAlert,
-  createErrorAlert
+  createErrorAlertClickHandler
 };

@@ -5,12 +5,14 @@ import {
   resetMap
 } from './map.js';
 import {
-  createErrorAlert,
-  createSuccessAlert
+  createErrorAlertClickHandler,
+  createSuccessAlertClickHandler
 } from './alert-modal.js';
+
 const FILE_TYPES = [
   'gif', 'jpg', 'jpeg', 'png',
 ];
+
 const DEFAULT_AVATAR_SRC = 'img/muffin-grey.svg';
 const DEFAULT_HOUSING_PLACE_SRC = 'img/muffin-white.svg';
 const TIME_OUT = 1000;
@@ -66,15 +68,15 @@ const setErrorBorder = (evt) => {
   }, TIME_OUT);
 };
 
-const validaChangeteGuestsAndRoomsHandler = () => {
+const validateRoomsAndGuests = () => {
   const numberValueRooms = Number(valueRooms.value);
   const numberValueGuets = Number(valueGuests.value);
   if (numberValueRooms === VALUE_ROOMS_NOT_FOR_GUESTS && numberValueGuets !== VALUE_GUESTS_NOT_FOR_PLACE) {
     setErrorBorder(valueRooms);
-    valueRooms.setCustomValidity('Выбранное Вами помещение не повзоляет разместить гостей');
+    valueRooms.setCustomValidity('Выбранное Вами помещение не позволяет разместить гостей');
   } else if (numberValueGuets === VALUE_GUESTS_NOT_FOR_PLACE && numberValueRooms !== VALUE_ROOMS_NOT_FOR_GUESTS) {
     setErrorBorder(valueGuests);
-    valueGuests.setCustomValidity('Выбранный Вами вариант не повзоляет разместить гостей в стандартных номерах, выберите другой вариант');
+    valueGuests.setCustomValidity('Выбранный Вами вариант не позволяет разместить гостей в стандартных номерах, выберите другой вариант');
   } else if (numberValueRooms < numberValueGuets) {
     setErrorBorder(valueRooms);
     valueRooms.setCustomValidity('Превышено количество гостей для выбранного количества комнат');
@@ -84,7 +86,11 @@ const validaChangeteGuestsAndRoomsHandler = () => {
   }
 };
 
-const checkValidation = () => {
+const valueRoomsAndGuestsChangeHandler = () => {
+  validateRoomsAndGuests();
+};
+
+const checkValidationChangeHandler = () => {
   typePlace.addEventListener('change', () => {
     switch (typePlace.value) {
       case TYPE_PLACE_ONE:
@@ -144,8 +150,8 @@ const checkValidation = () => {
     }
   });
 
-  valueRooms.addEventListener('change', validaChangeteGuestsAndRoomsHandler);
-  valueGuests.addEventListener('change', validaChangeteGuestsAndRoomsHandler);
+  valueRooms.addEventListener('change', valueRoomsAndGuestsChangeHandler);
+  valueGuests.addEventListener('change', valueRoomsAndGuestsChangeHandler);
 
   titleInput.addEventListener('change', () => {
     if (titleInput.validity.tooShort) {
@@ -192,6 +198,7 @@ const checkValidation = () => {
       reader.readAsDataURL(file);
     }
   });
+
   fileChooserHousing.addEventListener('change', () => {
     const file = fileChooserHousing.files[0];
     const fileName = file.name.toLowerCase();
@@ -208,12 +215,12 @@ const checkValidation = () => {
   });
 };
 
-const setUserFormSubmit = () => {
+const setUserFormSubmitHandler = () => {
   addForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     sendData(
-      () => createSuccessAlert(),
-      () => createErrorAlert(),
+      () => createSuccessAlertClickHandler(),
+      () => createErrorAlertClickHandler(),
       new FormData(evt.target),
     );
   });
@@ -222,13 +229,12 @@ const setUserFormSubmit = () => {
 const formReset = () => {
   addForm.reset();
   mapFilter.reset();
-  validaChangeteGuestsAndRoomsHandler();
+  validateRoomsAndGuests();
   priceInput.placeholder = PRICE_FLAT;
   priceInput.min = PRICE_FLAT;
   previewAvatar.src = DEFAULT_AVATAR_SRC;
   previewHousing.src = DEFAULT_HOUSING_PLACE_SRC;
   resetMap();
-
 };
 
 const disableForm = () => {
@@ -255,7 +261,7 @@ const disableForm = () => {
   });
 };
 
-const enableFormAds = () => {
+const enableFormAdsClickHandler = () => {
   addForms.forEach((item) => {
     item.classList.remove('ad-form--disabled');
   });
@@ -269,9 +275,9 @@ const enableFormAds = () => {
     evt.preventDefault();
     formReset();
   });
-  checkValidation();
-  validaChangeteGuestsAndRoomsHandler();
-  setUserFormSubmit();
+  checkValidationChangeHandler();
+  validateRoomsAndGuests();
+  setUserFormSubmitHandler();
 };
 
 const enableFiltersAds = () => {
@@ -290,7 +296,7 @@ const enableFiltersAds = () => {
 };
 
 export {
-  enableFormAds,
+  enableFormAdsClickHandler,
   disableForm,
   enableFiltersAds,
   formReset
